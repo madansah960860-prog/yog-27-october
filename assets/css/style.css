@@ -1,0 +1,451 @@
+/* ==========================================================================
+   Thistledown Kitchen — seasonal cooking
+   Palette: fern olive primary, cornflower accent, oat paper.
+   Type: Vollkorn (display) + Public Sans (body), 19px base.
+   Layout: content column with a right sidebar from 1024px.
+   Contrast: every text pair in here is audited in _tools/contrast.py (>= 7:1 body).
+   ========================================================================== */
+
+/* ---------- fonts (self-hosted, latin subset only) ---------- */
+@font-face {
+  font-family: 'Vollkorn';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/vollkorn-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Vollkorn';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/vollkorn-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/public-sans-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/public-sans-latin-600-normal.woff2') format('woff2');
+}
+
+/* ---------- tokens ---------- */
+:root {
+  --paper:   #F4F2E8;
+  --card:    #FFFEFA;
+  --ink:     #231F18;
+  --muted:   #544C3C;
+  --primary: #3E4D2C;
+  --primary-deep: #2E3A20;
+  --accent:  #2F5574;
+  --link:    #2F5574;
+  --hair:    #CFC9B4;
+  --control: #908C7D;
+  --on-dark: #FFFFFF;
+  --tint:    #E9E7D9;
+
+  --serif: 'Vollkorn', Georgia, 'Times New Roman', serif;
+  --sans:  'Public Sans', -apple-system, 'Segoe UI', Arial, sans-serif;
+
+  --base: 1.1875rem;        /* 19px */
+  --measure: 68ch;
+  --gap: 1.5rem;
+  --wrap: 1180px;
+  --tap: 44px;
+}
+
+/* ---------- reset-ish ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--base)/1.7 var(--sans);
+  overflow-wrap: break-word;
+}
+img { max-width: 100%; height: auto; display: block; }
+figure { margin: 0; }
+
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  font-weight: 700;
+  line-height: 1.22;
+  color: var(--ink);
+  margin: 0 0 .6em;
+  letter-spacing: -0.005em;
+}
+h1 { font-size: clamp(2rem, 1.3rem + 2.6vw, 2.9rem); }
+h2 { font-size: clamp(1.5rem, 1.15rem + 1.3vw, 2rem); margin-top: 2.2rem; }
+h3 { font-size: 1.3rem; margin-top: 1.8rem; }
+h4 { font-size: 1.1rem; font-family: var(--sans); font-weight: 600; margin-top: 1.4rem; }
+p, ul, ol, dl, table { margin: 0 0 1.1rem; }
+ul, ol { padding-left: 1.3rem; }
+li { margin-bottom: .45rem; }
+
+a { color: var(--link); text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+main p a, main li a, main dd a { text-decoration: underline; }
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+.wrap { width: min(100% - 2rem, var(--wrap)); margin-inline: auto; }
+.measure { max-width: var(--measure); }
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--primary); color: var(--on-dark);
+  padding: .75rem 1.25rem; font-weight: 600;
+}
+.skip:focus { left: .5rem; top: .5rem; }
+
+/* ---------- header: utility strip + wordmark left, nav right ---------- */
+.util {
+  background: var(--primary-deep);
+  color: var(--on-dark);
+  font-size: .9rem;
+}
+.util__inner {
+  display: flex; flex-wrap: wrap; gap: .5rem 1.5rem;
+  align-items: center; justify-content: space-between;
+  padding: .45rem 0;
+}
+.util a { color: var(--on-dark); display: inline-flex; align-items: center;
+  min-height: var(--tap); padding: .35rem 0; }
+.util__line { margin: 0; }
+
+/* Standalone links get a 44px target. Links inside a sentence are left alone:
+   WCAG 2.2 SC 2.5.8 exempts targets whose size is constrained by the line height
+   of the surrounding text, and padding them would break the paragraph. */
+.card h3 a,
+.card__meta a,
+.side-block li a,
+.foot__addr a,
+.foot__col p a,
+.foot__legal a,
+.crumbs a,
+.strip li a {
+  display: inline-block;
+  min-height: 44px;
+  padding-block: .5rem;
+}
+.side-block li a { padding-block: .65rem; }
+
+.head { background: var(--card); border-bottom: 3px solid var(--primary); }
+.head__inner {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: 1rem; padding: 1.1rem 0;
+}
+.brand { display: flex; align-items: center; gap: .7rem; text-decoration: none;
+  min-height: var(--tap); }
+.brand__mark { flex: none; }
+.brand__name {
+  font-family: var(--serif); font-weight: 700; font-size: 1.65rem;
+  color: var(--ink); line-height: 1.1;
+}
+.brand__tag {
+  display: block; font-family: var(--sans); font-size: .82rem;
+  font-weight: 400; color: var(--muted); letter-spacing: .02em;
+}
+
+.menu-toggle {
+  display: inline-flex; align-items: center; gap: .5rem;
+  min-height: var(--tap); padding: .5rem 1rem;
+  background: var(--primary); color: var(--on-dark);
+  border: 2px solid var(--primary); border-radius: 1px;
+  font: 600 1rem var(--sans); cursor: pointer;
+}
+.menu-toggle__bars { display: inline-block; width: 18px; height: 2px;
+  background: currentColor; box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor; }
+
+.nav ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .25rem 1.4rem;
+}
+.nav li { margin: 0; }
+.nav a {
+  display: block; min-height: var(--tap); line-height: var(--tap);
+  padding: 0 .15rem; font-weight: 600; font-size: 1rem;
+  color: var(--ink); text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+.nav a:hover { border-bottom-color: var(--hair); }
+.nav a.is-current { border-bottom-color: var(--primary); color: var(--primary-deep); }
+
+@media (max-width: 767px) {
+  .head__inner { align-items: center; }
+  .nav { flex-basis: 100%; }
+  .nav[hidden] { display: none; }
+  .nav ul { flex-direction: column; gap: 0; border-top: 1px solid var(--hair); }
+  .nav li + li { border-top: 1px solid var(--hair); }
+  .nav a { line-height: 1.4; padding: .85rem .2rem; }
+}
+@media (min-width: 768px) { .menu-toggle { display: none; } .nav[hidden] { display: block; } }
+
+/* ---------- breadcrumbs ---------- */
+.crumbs { font-size: .92rem; margin: 1.2rem 0 .4rem; }
+.crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; }
+.crumbs li { margin: 0; color: var(--muted); }
+.crumbs li + li::before { content: "/"; margin-right: .4rem; color: var(--control); }
+
+/* ---------- layout: content + right sidebar ---------- */
+.layout { display: block; padding: 1rem 0 3rem; }
+.layout__main { min-width: 0; }
+.layout__side { min-width: 0; margin-top: 2.5rem; }
+@media (min-width: 1024px) {
+  .layout {
+    display: grid; grid-template-columns: minmax(0, 1fr) 310px;
+    gap: 3rem; align-items: start;
+  }
+  .layout__side { margin-top: 0; position: sticky; top: 1.5rem; }
+}
+.layout__main > * { max-width: var(--measure); }
+.layout__main > .full, .layout__main > figure, .layout__main > .cards,
+.layout__main > .ad-slot, .layout__main > .strip, .layout__main > .tablewrap { max-width: none; }
+
+/* ---------- hero ---------- */
+.hero { background: var(--card); border-bottom: 1px solid var(--hair); }
+.hero__inner { padding: 2.5rem 0 2.75rem; }
+.hero__grid { display: grid; gap: 1.8rem; align-items: center; }
+@media (min-width: 900px) { .hero__grid { grid-template-columns: 1.05fr .95fr; gap: 3rem; } }
+.hero h1 { margin-bottom: .5rem; }
+.hero__lede { font-size: 1.38rem; line-height: 1.55; color: var(--ink); max-width: 34ch; }
+.hero__img { border: 1px solid var(--hair); }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--tap); padding: .7rem 1.35rem;
+  font: 600 1rem/1.3 var(--sans); text-decoration: none; cursor: pointer;
+  border-radius: 1px; border: 2px solid var(--primary);
+  background: var(--primary); color: var(--on-dark);
+}
+.btn:hover { background: var(--primary-deep); border-color: var(--primary-deep); }
+.btn--ghost { background: transparent; color: var(--primary-deep); }
+.btn--ghost:hover { background: var(--tint); color: var(--primary-deep); }
+.btn--accent { background: var(--accent); border-color: var(--accent); }
+.btn--accent:hover { background: #24425A; border-color: #24425A; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .8rem; margin: 1.4rem 0; }
+
+/* ---------- cards: square paper cards with an olive top edge ---------- */
+.cards {
+  display: grid; gap: var(--gap); padding: 0; margin: 1.5rem 0 2rem;
+  list-style: none; grid-template-columns: 1fr;
+}
+@media (min-width: 620px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .cards--3 { grid-template-columns: repeat(3, 1fr); } }
+.card {
+  background: var(--card); border: 1px solid var(--hair);
+  border-top: 3px solid var(--primary);
+  display: flex; flex-direction: column; margin: 0;
+}
+.card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.card__body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
+.card__kicker {
+  font-size: .78rem; font-weight: 600; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem;
+}
+.card h3 { margin: 0 0 .5rem; font-size: 1.22rem; }
+.card h3 a { color: var(--ink); text-decoration: none; }
+.card h3 a:hover { text-decoration: underline; }
+.card p { margin: 0 0 .9rem; font-size: .98rem; color: var(--muted); }
+.card__meta { margin-top: auto; font-size: .88rem; color: var(--muted); }
+
+/* ---------- sidebar blocks ---------- */
+.side-block {
+  background: var(--card); border: 1px solid var(--hair);
+  border-top: 3px solid var(--accent); padding: 1.1rem 1.15rem 1.25rem;
+  margin-bottom: 1.6rem;
+}
+.side-block h2 { font-size: 1.15rem; margin: 0 0 .7rem; }
+.side-block ul { list-style: none; padding: 0; margin: 0; }
+.side-block li { margin: 0; border-top: 1px solid var(--hair); }
+.side-block li:first-child { border-top: 0; }
+.side-block li a { display: block; padding: .65rem 0; min-height: var(--tap); }
+
+/* ---------- panels and boxes ---------- */
+.panel {
+  background: var(--card); border: 1px solid var(--hair);
+  border-left: 4px solid var(--primary); padding: 1.1rem 1.25rem; margin: 1.6rem 0;
+}
+.panel h2, .panel h3 { margin-top: 0; }
+.panel--accent { border-left-color: var(--accent); }
+.panel--tint { background: var(--tint); border-color: var(--control); }
+.panel > :last-child { margin-bottom: 0; }
+
+.note {
+  font-size: .95rem; color: var(--muted);
+  border-top: 1px solid var(--hair); padding-top: .8rem; margin-top: 1.4rem;
+}
+
+/* ---------- recipe components ---------- */
+.recipe-meta {
+  display: grid; gap: .6rem 1.5rem; margin: 1.4rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary);
+  padding: 1rem 0;
+}
+.recipe-meta div { margin: 0; }
+.recipe-meta dt {
+  font-size: .78rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+}
+.recipe-meta dd { margin: .15rem 0 0; font-weight: 600; font-size: 1.05rem; }
+
+.jump-row { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1.2rem 0 1.6rem; }
+
+.ingredients { list-style: none; padding: 0; }
+.ingredients li {
+  display: flex; gap: 1rem; justify-content: space-between;
+  padding: .55rem 0; border-bottom: 1px dotted var(--hair);
+}
+.ingredients .qty { font-weight: 600; white-space: nowrap; flex: none; color: var(--primary-deep); }
+.ingredients .item { text-align: right; }
+
+.steps { counter-reset: step; list-style: none; padding: 0; }
+.steps > li {
+  counter-increment: step; position: relative;
+  padding-left: 3rem; margin-bottom: 1.4rem; min-height: 2.1rem;
+}
+.steps > li::before {
+  content: counter(step); position: absolute; left: 0; top: .1rem;
+  width: 2.1rem; height: 2.1rem; display: grid; place-items: center;
+  background: var(--primary); color: var(--on-dark);
+  font: 700 1rem/1 var(--sans);
+}
+
+.tablewrap { overflow-x: auto; margin: 1.4rem 0; border: 1px solid var(--hair); }
+table { border-collapse: collapse; width: 100%; min-width: 30rem; background: var(--card); }
+caption { text-align: left; padding: .7rem .9rem; font-weight: 600; background: var(--tint); }
+th, td { text-align: left; padding: .65rem .9rem; border-bottom: 1px solid var(--hair); }
+th { font-weight: 600; background: var(--tint); }
+
+/* ---------- ad slot: never looks like content or a button ---------- */
+.ad-slot {
+  margin: 3.5rem 0;              /* 150px+ clearance from buttons and nav */
+  padding: .75rem;
+  background: #ECEAE1;
+  border: 1px dashed var(--control);
+  text-align: center;
+}
+.layout__main > .ad-slot:first-child,
+.layout__main > .ad-slot { margin-block: 3.5rem; }
+.ad-slot__label {
+  margin: 0 0 .5rem; font-size: .72rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted); font-weight: 600;
+}
+.ad-slot__frame { min-height: 100px; display: grid; place-items: center; }
+@media (min-width: 768px) { .ad-slot__frame { min-height: 250px; } }
+.side-block + .ad-slot, .ad-slot + * { margin-top: 3.5rem; }
+
+/* ---------- forms ---------- */
+.form { max-width: 34rem; }
+.field { margin-bottom: 1.2rem; }
+.field label { display: block; font-weight: 600; margin-bottom: .3rem; }
+.field .hint { display: block; font-size: .9rem; color: var(--muted); margin-bottom: .35rem; }
+input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+  width: 100%; min-height: var(--tap); padding: .6rem .7rem;
+  font: 400 1rem var(--sans); color: var(--ink);
+  background: var(--card); border: 2px solid var(--control); border-radius: 1px;
+}
+textarea { min-height: 9rem; resize: vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--ink); outline-offset: 2px;
+}
+.req { color: var(--primary-deep); font-weight: 600; }
+.check { display: flex; gap: .7rem; align-items: flex-start; }
+.check input { width: 1.4rem; height: 1.4rem; margin-top: .25rem; flex: none; }
+
+/* ---------- FAQ accordion ---------- */
+.faq { border-top: 1px solid var(--hair); margin: 1.5rem 0; }
+.faq__item { border-bottom: 1px solid var(--hair); }
+.faq__q {
+  width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  font: 600 1.08rem/1.4 var(--sans); color: var(--ink);
+  padding: 1rem 2.2rem 1rem 0; min-height: var(--tap); position: relative;
+}
+.faq__q::after {
+  content: "+"; position: absolute; right: .3rem; top: 50%; transform: translateY(-50%);
+  font: 700 1.5rem/1 var(--sans); color: var(--primary);
+}
+.faq__q[aria-expanded="true"]::after { content: "\2013"; }
+.faq__a { padding: 0 0 1rem; }
+.faq__a > :last-child { margin-bottom: 0; }
+
+/* ---------- price block ---------- */
+.price {
+  font-family: var(--serif); font-weight: 700;
+  font-size: 1.9rem; color: var(--primary-deep); display: block; line-height: 1.1;
+}
+.price small { font: 400 .95rem var(--sans); color: var(--muted); display: block; margin-top: .2rem; }
+.terms { font-size: .95rem; }
+.terms li { margin-bottom: .35rem; }
+
+/* ---------- consent banner ---------- */
+.consent {
+  position: fixed; inset: auto 0 0 0; z-index: 90;
+  background: var(--card); border-top: 3px solid var(--primary);
+  box-shadow: 0 -2px 10px rgba(35, 31, 24, .14);
+}
+.consent__inner { width: min(100% - 2rem, var(--wrap)); margin-inline: auto; padding: 1.1rem 0 1.3rem; }
+.consent__title { font-size: 1.15rem; margin: 0 0 .4rem; }
+.consent__text { margin: 0 0 .9rem; font-size: .96rem; max-width: 72ch; }
+.consent__actions { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; }
+.btn--consent { min-width: 9rem; }
+.consent__link { font-weight: 600; min-height: var(--tap); display: inline-flex; align-items: center; }
+
+/* ---------- footer ---------- */
+.foot {
+  background: var(--primary-deep); color: var(--on-dark);
+  margin-top: 3rem; padding: 2.5rem 0 2rem; font-size: .96rem;
+}
+.foot a { color: var(--on-dark); }
+.foot__note { margin: 0 0 1.5rem; max-width: 70ch; color: #E4E6DC; }
+.foot__cols { display: grid; gap: 1.8rem; }
+@media (min-width: 720px) { .foot__cols { grid-template-columns: 1.1fr .8fr 1.3fr; } }
+.foot__h {
+  font-family: var(--sans); font-size: .8rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: #CDD2C2; margin: 0 0 .7rem;
+}
+.foot__list, .foot__list--two { list-style: none; padding: 0; margin: 0; }
+.foot__list li { margin: 0; }
+.foot__list a { display: inline-block; padding: .4rem 0; min-height: var(--tap);
+  line-height: 1.6; }
+@media (min-width: 560px) { .foot__list--two { columns: 2; column-gap: 1.5rem; } }
+.foot__addr, .foot__hours { margin: 0 0 .6rem; color: #E4E6DC; }
+.foot__legal {
+  border-top: 1px solid #556046; margin: 1.8rem 0 0; padding-top: 1rem;
+  display: flex; flex-wrap: wrap; gap: .5rem 1.5rem;
+}
+.foot__legal--small { border-top: 0; margin-top: .2rem; padding-top: 0;
+  font-size: .9rem; color: #CDD2C2; }
+
+/* ---------- misc ---------- */
+/* the lede must read larger than the body text it introduces */
+.lede { font-size: 1.32rem; line-height: 1.58; }
+.kicker {
+  font-size: .8rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 .5rem;
+}
+.strip { border-top: 1px solid var(--hair); margin: 2.5rem 0 0; padding-top: 1.5rem; }
+figcaption { font-size: .9rem; color: var(--muted); padding-top: .5rem; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
